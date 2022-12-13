@@ -37,17 +37,20 @@ def direct_to_register():
 
 # GET /register
 # Show a form that when submitted will register/create a user. This form should accept a username, password, email, first_name, and last_name.
-@app.route("/register", method=["GET", "POST"])
+@app.route("/register", methods=["GET", "POST"])
 def register_user():
     """display and registers a user"""
-    
+
     form = RegisterForm()
 
     if form.validate_on_submit():
-        name = form.username.data
+        username = form.username.data
         pwd = form.password.data
+        email = form.email.data
+        first_name = form.first_name.data
+        last_name = form.last_name.data
 
-        user = User.register(name, pwd)
+        user = User.register(username, pwd, email, first_name, last_name)
         db.session.add(user)
         db.session.commit()
 
@@ -79,7 +82,7 @@ def login():
         else:
             form.username.errors = ["Bad name/password"]
 
-    return render_template("login.html", form=form)   
+    return render_template("login.html", form=form)
 
 @app.get("/secret")
 def render_secret_page():
@@ -88,7 +91,7 @@ def render_secret_page():
     if "user_id" not in session:
         flash("You must be logged in to view!")
         return redirect("/")
-    
+
     else:
         return render_template("secrets.html")
 
