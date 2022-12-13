@@ -1,14 +1,16 @@
-from flask import Flask, render_template, redirect, jsonify, request
+from flask import Flask, render_template, redirect, jsonify, request, session, flash
 
 from flask_debugtoolbar import DebugToolbarExtension
 
-from models import db, connect_db, Cupcake
+from models import db, connect_db, User
+
+from forms import RegisterForm, LoginForm, CSRFProtectForm
 
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = "secret"
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///adopt"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///notes"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 
@@ -37,27 +39,59 @@ def direct_to_register():
 # Show a form that when submitted will register/create a user. This form should accept a username, password, email, first_name, and last_name.
 @app.route("/register", method=["GET", "POST"])
 def register_user():
-"""display and registers a user"""
+    """display and registers a user"""
+    
+    form = RegisterForm()
+
+    if form.validate_on_submit():
+        name = form.username.data
+        pwd = form.password.data
+
+        user = User.register(name, pwd)
+        db.session.add(user)
+        db.session.commit()
+
+        session["user_id"] = user.id
+
+        # on successful login, redirect to secret page
+        return redirect("/secret")
+
+    else:
+        return render_template("register.html", form=form)
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """Produce login form or handle login."""
+
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        name = form.username.data
+        pwd = form.password.data
+
+        # authenticate will return a user or False
+        user = User.authenticate(name, pwd)
+
+        if user:
+            session["user_id"] = user.id  # keep logged in
+            return redirect("/secret")
+
+        else:
+            form.username.errors = ["Bad name/password"]
+
+    return render_template("login.html", form=form)   
+
+@app.get("/secret")
+def render_secret_page():
+    """returns the secrets"""
+
+    if "user_id" not in session:
+        flash("You must be logged in to view!")
+        return redirect("/")
+    
+    else:
+        return render_template("secrets.html")
 
 
 
 
-
-
-
-
-
-
-Make sure you are using WTForms and that your password input hides the characters that the user is typing!
-
-POST /register
-Process the registration form by adding a new user. Then redirect to /secret
-GET /login
-Show a form that when submitted will login a user. This form should accept a username and a password.
-
-Make sure you are using WTForms and that your password input hides the characters that the user is typing!
-
-POST /login
-Process the login form, ensuring the user is authenticated and going to /secret if so.
-GET /secret
-Return the text “You made it!” (don’t worry, we’ll get rid of this soon)

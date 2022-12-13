@@ -4,7 +4,7 @@ from wtforms import StringField, PasswordField
 from wtforms.validators import InputRequired
 
 
-class Register_form(FlaskForm):
+class RegisterForm(FlaskForm):
     """Sets up form for user"""
 
     username = StringField("Username", validators=[InputRequired()])
@@ -16,6 +16,6 @@ class LoginForm(FlaskForm):
     username = StringField("Username", validators=[InputRequired()])
     password = PasswordField("Password", validators=[InputRequired()])
 
-class CSRFProtentForm(FlaskForm):
+class CSRFProtectForm(FlaskForm):
     """Form for just CSRF Protection"""
 
