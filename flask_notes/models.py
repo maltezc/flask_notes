@@ -47,4 +47,5 @@ class User(db.Model):
         hashed = bcrypt.generate_password_hash(pwd).decode('utf8')
 
         #return instance of user w/username and hashed pwd
-        return cls(username=username, password=hashed, email=email, first_name=first_name, last_name=last_name)
+        return cls(username=username, password=hashed, 
+        email=email, first_name=first_name, last_name=last_name)

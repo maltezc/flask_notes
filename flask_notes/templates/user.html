@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Secrets
+{% endblock %}
+{% block content %}
+<h1>This is a secret page!</h1>
+<ul>
+    <li>Username: {{user.username}}</li>
+    <li>Email: {{user.email}}</li>
+    <li>First Name: {{user.first_name}}</li>
+    <li>Last Name: {{user.last_name}}</li>
+
+</ul>
+<form method="POST" action="/logout">
+    <button>logout</button>
+</form>
+
+
+{% endblock %}

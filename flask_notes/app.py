@@ -26,17 +26,13 @@ toolbar = DebugToolbarExtension(app)
 
 
 #####################################RENDER ROUTES#######################
-""" GET /
-Redirect to /register. """
+
 @app.get('/')
 def direct_to_register():
     """redirects to register"""
 
     return redirect("/register")
 
-
-# GET /register
-# Show a form that when submitted will register/create a user. This form should accept a username, password, email, first_name, and last_name.
 @app.route("/register", methods=["GET", "POST"])
 def register_user():
     """display and registers a user"""
@@ -54,10 +50,10 @@ def register_user():
         db.session.add(user)
         db.session.commit()
 
-        session["user_id"] = user.id
+        session["user_name"] = user.username
 
         # on successful login, redirect to secret page
-        return redirect("/secret")
+        return redirect(f"/users/{username}")
 
     else:
         return render_template("register.html", form=form)
@@ -76,7 +72,7 @@ def login():
         user = User.authenticate(name, pwd)
 
         if user:
-            session["user_id"] = user.id  # keep logged in
+            session["user_name"] = user.username  # keep logged in
             return redirect("/secret")
 
         else:
@@ -84,16 +80,30 @@ def login():
 
     return render_template("login.html", form=form)
 
-@app.get("/secret")
-def render_secret_page():
-    """returns the secrets"""
+@app.get("/users/<username>")
+def render_secret_page(username):
+    """returns the user"""
 
-    if "user_id" not in session:
+    user = User.query.get_or_404(f"{username}")
+
+    if "user_name" not in session:
         flash("You must be logged in to view!")
         return redirect("/")
 
     else:
-        return render_template("secrets.html")
+        return render_template("user.html", user=user)
+
+@app.post("/logout")
+def logout():
+    """Logs user out and redirects to homepage."""
+
+    form = CSRFProtectForm()
+
+    if form.validate_on_submit():
+        # Remove "user_name" if present, but no errors if it wasn't
+        session.pop("user_name", None)
+
+    return redirect("/")
 
 
 
