@@ -25,6 +25,8 @@ db.create_all()
 toolbar = DebugToolbarExtension(app)
 
 
+
+
 #####################################RENDER ROUTES#######################
 
 @app.get('/')
@@ -136,6 +138,12 @@ def delete(username):
 def add_note(username):
     """Add a note"""
 
+    user = User.query.get_or_404(username)
+
+    if user:
+            session["user_name"] = user.username  # keep logged in
+            return redirect(f"/users/{username}")
+
     form = AddNoteForm()
 
     if form.validate_on_submit():
@@ -147,7 +155,7 @@ def add_note(username):
         db.session.add(note)
         db.session.commit()
 
-        render_template("add_note.html", form=form)
+        render_template("add_note.html", form=form, user=user)
     else:
         redirect(f'users/{username}')
 

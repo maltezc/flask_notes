@@ -1,3 +1,4 @@
+from flask import session, flash, redirect
 from flask_bcrypt import Bcrypt
 bcrypt = Bcrypt()
 
@@ -60,6 +61,12 @@ class User(db.Model):
             return user
         else:
             return False
+
+    @classmethod
+    def check_if_logged_in(cls, username):
+        if "user_name" not in session or session["user_name"] != username:
+            flash("You must be logged in to view!")
+            return redirect("/")
 
 
 class Note(db.Model):
