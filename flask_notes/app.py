@@ -2,9 +2,9 @@ from flask import Flask, render_template, redirect, jsonify, request, session, f
 
 from flask_debugtoolbar import DebugToolbarExtension
 
-from models import db, connect_db, User
+from models import db, connect_db, User, Note
 
-from forms import RegisterForm, LoginForm, CSRFProtectForm
+from forms import RegisterForm, LoginForm, CSRFProtectForm, AddNoteForm
 
 app = Flask(__name__)
 
@@ -124,3 +124,49 @@ def delete(username):
         session.clear()
 
         return redirect("/")
+
+
+
+# GET /users/<username>/notes/add
+# Display a form to add notes.
+
+# POST /users/<username>/notes/add
+# Add a new note and redirect to /users/<username>
+@app.route('users/<username>/notes/add', methods=["GET","POST"])
+def add_note(username):
+    """Add a note"""
+
+    form = AddNoteForm()
+
+    if form.validate_on_submit():
+        title = form.title.data
+        content = form.content.data
+
+        note = Note(title,content)
+
+        db.session.add(note)
+        db.session.commit()
+
+        render_template("add_note.html", form=form)
+    else:
+        redirect(f'users/{username}')
+
+
+
+
+# GET /notes/<note-id>/update
+# Display a form to edit a note.
+
+
+# POST /notes/<note-id>/update
+# Update a note and redirect to /users/<username>.
+
+
+# POST /notes/<note-id>/delete
+# Delete a note and redirect to /users/<username>.
+
+
+
+# As with the logout and delete routes, make sure you have CSRF protection for this.
+
+
