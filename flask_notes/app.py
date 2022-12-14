@@ -141,8 +141,8 @@ def add_note(username):
     user = User.query.get_or_404(username)
 
     if user:
-            session["user_name"] = user.username  # keep logged in
-            return redirect(f"/users/{username}")
+        session["user_name"] = user.username  # keep logged in
+        return redirect(f"/users/{username}")
 
     form = AddNoteForm()
 
