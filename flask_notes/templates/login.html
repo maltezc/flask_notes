@@ -6,27 +6,27 @@ Login
 
 {% block content %}
 
-  <h1 class="display-4">Log In</h1>
-  <p class="lead">Welcome! Please log in.</p>
+<h1 class="display-4">Log In</h1>
+<p class="lead">Welcome! Please log in.</p>
 
-  <form method="POST">
+<form method="POST">
 
     {{ form.hidden_tag() }}
 
     {% for field in form
-  if field.widget.input_type != 'hidden' %}
-      <p>
+    if field.widget.input_type != 'hidden' %}
+    <p>
         {{ field.label }}
         {{ field }}
 
         {% for error in field.errors %}
-          {{ error }}
+        {{ error }}
         {% endfor %}
-      </p>
+    </p>
     {% endfor %}
 
     <button type="submit">Log In</button>
 
-  </form>
+</form>
 
 {% endblock %}

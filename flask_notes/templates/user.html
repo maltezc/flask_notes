@@ -17,7 +17,23 @@
     <li>Last Name: {{user.last_name}}</li>
 
 </ul>
+<h1>Notes: </h1>
+{% if not user.notes %}
+<h4>No notes at this time.
+    <a href="/users/{{user.username}}/notes/add">Add a note</a>
+</h4>
+{%endif%}
+<ul>
+    {% for note in user.notes %}
+    <li><a href='/notes/{{note.id}}/update'>{{note.title}}</a></li>
+    <form action="/notes/{{user.note.id}}/delete"></form>
+    {% endfor %}
+</ul>
 
+<form Method="POST" action="/users/{{user.username}}/delete">
+    {{ form.hidden_tag() }}
+    <button>Delete User</button>
+</form>
 
 
 

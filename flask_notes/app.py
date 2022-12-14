@@ -107,5 +107,20 @@ def logout():
     return redirect("/")
 
 
+@app.post("/users/<username>/delete")
+def delete(username):
+    """deletes username, all associated notes, and user's session"""
 
+    form = CSRFProtectForm()
+    user = User.query.get(username)
 
+    if form.validate_on_submit():
+        # db.session.delete(user.notes)
+        # db.session.commit()
+
+        db.session.delete(user)
+        db.session.commit()
+
+        session.clear()
+
+        return redirect("/")
