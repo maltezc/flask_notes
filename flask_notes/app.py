@@ -70,10 +70,9 @@ def login():
 
         # authenticate will return a user or False
         user = User.authenticate(name, pwd)
-
         if user:
             session["user_name"] = user.username  # keep logged in
-            return redirect("/secret")
+            return redirect(f"/users/{name}")
 
         else:
             form.username.errors = ["Bad name/password"]
@@ -84,14 +83,15 @@ def login():
 def render_secret_page(username):
     """returns the user"""
 
-    user = User.query.get_or_404(f"{username}")
+    user = User.query.get_or_404(username)
+    form = CSRFProtectForm()
 
     if "user_name" not in session:
         flash("You must be logged in to view!")
         return redirect("/")
 
     else:
-        return render_template("user.html", user=user)
+        return render_template("user.html", user=user, form=form)
 
 @app.post("/logout")
 def logout():
@@ -102,7 +102,6 @@ def logout():
     if form.validate_on_submit():
         # Remove "user_name" if present, but no errors if it wasn't
         session.pop("user_name", None)
-
     return redirect("/")
 
 
