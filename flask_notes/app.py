@@ -80,18 +80,20 @@ def login():
     return render_template("login.html", form=form)
 
 @app.get("/users/<username>")
-def render_secret_page(username):
+def render_user_page(username):
     """returns the user"""
 
-    user = User.query.get_or_404(username)
-    form = CSRFProtectForm()
-
-    if "user_name" not in session:
+    if "user_name" not in session or session["user_name"] != username:
+        # if "user_name" not in session:
         flash("You must be logged in to view!")
         return redirect("/")
 
-    else:
-        return render_template("user.html", user=user, form=form)
+
+    user = User.query.get_or_404(username)
+
+    form = CSRFProtectForm()
+
+    return render_template("user.html", user=user, form=form)
 
 @app.post("/logout")
 def logout():

@@ -1,10 +1,15 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Secrets
+{{ user.username }}
 {% endblock %}
 {% block content %}
-<h1>This is a secret page!</h1>
+<h1>This the user's Info!</h1>
+<form method="POST" action="/logout">
+    {{ form.hidden_tag() }}
+
+    <button>logout</button>
+</form>
 <ul>
     <li>Username: {{user.username}}</li>
     <li>Email: {{user.email}}</li>
@@ -12,11 +17,8 @@ Secrets
     <li>Last Name: {{user.last_name}}</li>
 
 </ul>
-<form method="POST" action="/logout">
-    {{ form.hidden_tag() }}
 
-    <button>logout</button>
-</form>
+
 
 
 {% endblock %}
