@@ -41,22 +41,21 @@ class User(db.Model):
     )
 
     @classmethod
-    def register(cls,username, pwd, email, first_name, last_name):
+    def register(cls,username, password, email, first_name, last_name):
         """Register user /hashed password & return user"""
 
-        hashed = bcrypt.generate_password_hash(pwd).decode('utf8')
+        hashed = bcrypt.generate_password_hash(password).decode('utf8')
 
         #return instance of user w/username and hashed pwd
-        return cls(username=username, password=hashed, 
+        return cls(username=username, password=hashed,
         email=email, first_name=first_name, last_name=last_name)
 
     @classmethod
-    def authenticate(cls, username, pwd):
+    def authenticate(cls, username, password):
         """authetnicates that the name and password is a correct match"""
 
-        user = cls.query.filter_by(username=username).one_or_none()
-        breakpoint()
-        if user and bcrypt.check_password_hash(user.password, pwd):
+        user = cls.query.get_or_404(username)
+        if user and bcrypt.check_password_hash(user.password, password):
             # return user instance
             return user
         else:

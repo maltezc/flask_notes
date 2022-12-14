@@ -40,20 +40,20 @@ def register_user():
     form = RegisterForm()
 
     if form.validate_on_submit():
-        username = form.username.data
+        name = form.username.data
         pwd = form.password.data
         email = form.email.data
         first_name = form.first_name.data
         last_name = form.last_name.data
 
-        user = User.register(username, pwd, email, first_name, last_name)
+        user = User.register(name, pwd, email, first_name, last_name)
         db.session.add(user)
         db.session.commit()
 
         session["user_name"] = user.username
 
         # on successful login, redirect to secret page
-        return redirect(f"/users/{username}")
+        return redirect(f"/users/{name}")
 
     else:
         return render_template("register.html", form=form)
@@ -65,14 +65,14 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
-        name = form.username.data
-        pwd = form.password.data
+        username = form.username.data
+        password = form.password.data
 
         # authenticate will return a user or False
-        user = User.authenticate(name, pwd)
+        user = User.authenticate(username, password)
         if user:
             session["user_name"] = user.username  # keep logged in
-            return redirect(f"/users/{name}")
+            return redirect(f"/users/{username}")
 
         else:
             form.username.errors = ["Bad name/password"]
